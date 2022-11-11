@@ -1,73 +1,35 @@
-# Turborepo starter
+# GH Actions with nested matrices
 
-This is an official Yarn v1 starter turborepo.
+This repository contains an example monorepo (created with [the official Turborepo example](https://turbo.build/repo/docs/getting-started/create-new)).
+The monorepo isn't the point here: the goal is to present a technique to build Github Actions made of dynamically nested matrices.
 
-## What's inside?
+Indeed, GH Actions allows creating matrices like documented [here](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs).
+The examples only shows how to create static matrices but there are multiple blog posts explaining how to dynamically generate matrices using the `fromJSON()` function such as [this one](https://michaelheap.com/dynamic-matrix-generation-github-actions/).
 
-This turborepo uses [Yarn](https://classic.yarnpkg.com/) as a package manager. It includes the following packages/apps:
+However, I needed to go even further: have nested matrices with the second one being dynamic! 
+Here's my use case:
+1. create a matrix of each app/package to test
+2. for each target, create a dynamic matrix to split the tests in multiple jobs
 
-### Apps and Packages
+For a while, I thought that this was not possible because the current actions syntax doesn't allow specifying such a setup.
+However, today I discovered a feature called [reusable workflows](https://docs.github.com/en/actions/using-workflows/reusing-workflow) (never too late) which enables us to achieve what I described above! 🎉
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `ui`: a stub React component library shared by both `web` and `docs` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+Indeed, you can call a reusable workflow from within a matrix like this:
+```yaml
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        scope: ['web', 'docs', 'ui']
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+    uses: ./.github/workflows/test.yml
+    with:
+      target: ${{ matrix.scope }}
+ ```
+ 
+ And then, you can create a dynamic matrix inside the reusable workflow! 😎
+ 
+ The actions graph doesn't nicely renders the nested matrices (yet) but it works fine:
+ <img width="642" alt="image" src="https://user-images.githubusercontent.com/2678610/201440067-df12f2e3-897d-4d30-bb8f-2887a0a88883.png">
 
-### Utilities
-
-This turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-yarn run build
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-yarn run dev
-```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Pipelines](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+ 
