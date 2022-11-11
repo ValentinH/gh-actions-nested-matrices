@@ -1,0 +1,50 @@
+name: Quality checks
+
+on:
+  pull_request:
+    branches:
+      - '*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  install:
+    name: 📦 Install
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: 'yarn'
+
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        id: cache-node-modules
+        with:
+          path: |
+            node_modules
+          key: node_modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Install app dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: yarn install --immutable
+
+  test:
+    needs: install
+
+    strategy:
+      fail-fast: false
+      matrix:
+        scope: ['web', 'docs', 'ui']
+
+    uses: ./.github/workflows/test.yml
+    with:
+      target: ${{ matrix.scope }}
+
