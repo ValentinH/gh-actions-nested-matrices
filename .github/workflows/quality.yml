@@ -36,7 +36,7 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install --immutable
 
-  build:
+  test:
     needs: install
 
     strategy:
@@ -44,7 +44,7 @@ jobs:
       matrix:
         scope: ['web', 'docs', 'ui']
 
-    uses: ./.github/workflows/build.yml
+    uses: ./.github/workflows/test.yml
     with:
       target: ${{ matrix.scope }}
 
