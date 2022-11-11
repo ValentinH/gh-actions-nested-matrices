@@ -39,33 +39,13 @@ jobs:
   build:
     name: 📊 ${{ matrix.scope }}
     needs: install
-    runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
         scope: ['web', 'docs', 'ui']
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'yarn'
-
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-          key: node_modules-${{ hashFiles('yarn.lock') }}
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Build apps and packages for ${{ matrix.scope }}
-        run: yarn build --filter=${{ matrix.scope }}
+    uses: ./.github/workflows/build.yml
+    with:
+      target: ${{ matrix.scope }}
 
