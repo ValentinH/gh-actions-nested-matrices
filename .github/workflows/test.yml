@@ -54,7 +54,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Build ${{ matrix.file }}
+      - name: Test ${{ matrix.file }}
         run: yarn test --filter=${{ inputs.target }}
         env:
           FILE: ${{ matrix.file }}
