@@ -37,7 +37,6 @@ jobs:
         run: yarn install --immutable
 
   build:
-    name: 📊 ${{ matrix.scope }}
     needs: install
 
     strategy:

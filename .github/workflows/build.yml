@@ -12,6 +12,11 @@ jobs:
     name: build ${{ inputs.target }}
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        scope: ['web', 'docs', 'ui']
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -32,6 +37,6 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Build ${{ inputs.target }}
-        run: yarn build --filter=${{ inputs.target }}
+      - name: Build ${{ inputs.target }} - ${{ matrix.scope }}
+        run: yarn build --filter=${{ matrix.scope }}
 
