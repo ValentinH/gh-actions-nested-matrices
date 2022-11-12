@@ -9,7 +9,8 @@
       "outputs": []
     },
     "test": {
-      "outputs": []
+      "outputs": [],
+      "env": ["FILE"]
     },
     "dev": {
       "cache": false
