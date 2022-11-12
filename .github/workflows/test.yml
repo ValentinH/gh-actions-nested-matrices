@@ -6,7 +6,11 @@ on:
       target:
         required: true
         type: string
-
+    secrets:
+      TURBO_TOKEN:
+        required: true
+      TURBO_TEAM:
+        required: true
 jobs:
   list-test-files:
     runs-on: ubuntu-latest

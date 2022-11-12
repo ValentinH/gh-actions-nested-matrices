@@ -47,4 +47,7 @@ jobs:
     uses: ./.github/workflows/test.yml
     with:
       target: ${{ matrix.scope }}
+    secrets:
+       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
