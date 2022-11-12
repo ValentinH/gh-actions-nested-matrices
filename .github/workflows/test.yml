@@ -6,7 +6,11 @@ on:
       target:
         required: true
         type: string
-
+    secrets:
+      TURBO_TOKEN:
+        required: true
+      TURBO_TEAM:
+        required: true
 jobs:
   list-test-files:
     runs-on: ubuntu-latest
@@ -60,8 +64,6 @@ jobs:
       - name: Test ${{ matrix.file }}
         run: yarn test --filter=${{ inputs.target }}
         env:
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
           FILE: ${{ matrix.file }}
 
   test-success:

@@ -31,6 +31,3 @@ Indeed, you can call a reusable workflow from within a matrix like this:
  
  The actions graph doesn't nicely renders the nested matrices (yet) but it works fine:
  <img width="642" alt="image" src="https://user-images.githubusercontent.com/2678610/201440067-df12f2e3-897d-4d30-bb8f-2887a0a88883.png">
-
- 
-test 2
